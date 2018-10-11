@@ -1,45 +1,69 @@
 import React, { Component  } from 'react'
-import { View, Text, StyleSheet  } from 'react-native'
+import { View, Text, StyleSheet, Animated, TouchableWithoutFeedback } from 'react-native'
 export default class App extends Component {
-    render() {
-        return (
-                  <View style={styles.app}>
-                    <View style={styles.appHeader}>
-                      <Text style={styles.appTitle}>Welcome to React ⚛️</Text>
-                    </View>
-                    <Text style={styles.appIntro}>
-                      To get started, edit src/App.js and save to reload.
-                    </Text>
-                  </View>
 
-        )
+	constructor(props) {
+		super(props)
+		this.pos = true;
+		this.moveAnimation = new Animated.ValueXY({ x: 0, y: 0 })
+	}
 
-    }
+	_moveBall = () => {
+		if (this.pos) {
+			Animated.spring(this.moveAnimation, {
+				toValue: { x: 0, y: -100 },
+			}).start();
+			this.pos = false;
+		}
+		else {
+			Animated.spring(this.moveAnimation, {
+				toValue: { x: 0, y: 0 },
+			}).start();
+			this.pos = true;
+		}
+	}
 
+	render() {
+		return (
+			<View style={styles.app}>
+				<Animated.View style={[styles.tennisBall, this.moveAnimation.getLayout()]}>
+					<TouchableWithoutFeedback style={styles.button} onPress={this._moveBall}>
+						<View>
+							<Text style={styles.buttonText}>Press</Text>
+						</View>
+					</TouchableWithoutFeedback>
+				</Animated.View>
+			</View>
+		)
+	}
 }
+
 const styles = StyleSheet.create({
-    app: {
-            flex: 1
+	app: {
+			flex: 1,
+			backgroundColor: '#222',
+			padding: 20,
+			justifyContent: 'center',
+			alignItems: 'center'
+	},
+	tennisBall: {
+		    display: 'flex',
+		    justifyContent: 'center',
+		    alignItems: 'center',
+		    backgroundColor: 'greenyellow',
+		    borderRadius: 100,
+		    width: 100,
+		    height: 100,
 
-    },
-    appHeader: {
-            flex: 1,
-            backgroundColor: '#222',
-            padding: 20,
-            justifyContent: 'center',
-            alignItems: 'center'
+	},
+	button: {
+		    paddingTop: 24,
+		    paddingBottom: 24,
 
-    },
-    appTitle: {
-            fontSize: 16,
-            color: 'white'
+	},
+	buttonText: {
+		    fontSize: 24,
+		    color: '#333',
 
-    },
-    appIntro: {
-            flex: 2,
-            fontSize: 30,
-            textAlign: 'center'
-
-    }
-
+	}
 })
